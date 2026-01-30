@@ -1,19 +1,27 @@
 "use client";
 
-import Image from "next/image";
-import { Plus, ArrowUpRight } from "lucide-react";
+import NextImage from "next/image";
+import { Plus, Minus, Trash2, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { useCartStore } from "@/store/useCartStore";
 
 interface ProductCardProps {
+    id: string; // Adicionado ID para a lógica do carrinho
     name: string;
     price: number;
     image: string;
     category: string;
 }
 
-export function ProductCard({ name, price, image, category }: ProductCardProps) {
+export function ProductCard({ id, name, price, image, category }: ProductCardProps) {
+    const addItem = useCartStore((state) => state.addItem);
+
+    const handleAdd = () => {
+        addItem({ id, name, price, image });
+    };
+
     return (
         <motion.div
             whileHover={{ y: -10 }}
@@ -21,7 +29,7 @@ export function ProductCard({ name, price, image, category }: ProductCardProps) 
         >
             <Card className="ocean-card group border-none">
                 <div className="relative h-48 w-full rounded-[1.5rem] overflow-hidden mb-6">
-                    <Image
+                    <NextImage
                         src={image}
                         alt={name}
                         fill
@@ -52,6 +60,7 @@ export function ProductCard({ name, price, image, category }: ProductCardProps) 
 
                         <motion.button
                             whileTap={{ scale: 0.9 }}
+                            onClick={handleAdd}
                             className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white shadow-lg shadow-sky-500/20 flex items-center justify-center transform hover:rotate-6 transition-all"
                         >
                             <Plus className="w-8 h-8 font-black" />

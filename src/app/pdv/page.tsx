@@ -3,26 +3,40 @@
 import { Sidebar } from "@/components/pdv/sidebar";
 import { ProductCard } from "@/components/pdv/product-card";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingBag, User, CreditCard, Receipt, Filter, ChevronRight, LayoutGrid, CircleUser, ArrowRight } from "lucide-react";
+import { Search, ShoppingBag, User, Receipt, Filter, ChevronRight, LayoutGrid, CircleUser, ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/useCartStore";
+import { useEffect, useState } from "react";
+import NextImage from "next/image";
 
 const categories = ["Todos", "Hambúrgueres", "Pizzas", "Bebidas", "Sobremesas", "Entradas"];
 
 const products = [
-    { name: "Hambúrguer Clássico", price: 32.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
-    { name: "Pizza Margherita", price: 55.00, category: "Pizzas", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&q=80" },
-    { name: "Coca-Cola 350ml", price: 7.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80" },
-    { name: "Fritas Rústicas", price: 18.00, category: "Entradas", image: "https://images.unsplash.com/photo-1573016608964-1449ae37f745?w=400&q=80" },
-    { name: "Double Cheese", price: 42.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80" },
-    { name: "Suco de Laranja", price: 12.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&q=80" },
-    { name: "Petit Gateau", price: 24.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" },
-    { name: "Onion Rings", price: 20.00, category: "Entradas", image: "https://images.unsplash.com/photo-1639024471283-035188835118?w=400&q=80" },
+    { id: "p1", name: "Hambúrguer Clássico", price: 32.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
+    { id: "p2", name: "Pizza Margherita", price: 55.00, category: "Pizzas", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&q=80" },
+    { id: "p3", name: "Coca-Cola 350ml", price: 7.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80" },
+    { id: "p4", name: "Fritas Rústicas", price: 18.00, category: "Entradas", image: "https://images.unsplash.com/photo-1573016608964-1449ae37f745?w=400&q=80" },
+    { id: "p5", name: "Double Cheese", price: 42.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80" },
+    { id: "p6", name: "Suco de Laranja", price: 12.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&q=80" },
+    { id: "p7", name: "Petit Gateau", price: 24.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" },
+    { id: "p8", name: "Onion Rings", price: 20.00, category: "Entradas", image: "https://images.unsplash.com/photo-1639024471283-035188835118?w=400&q=80" },
 ];
 
 export default function PDVPage() {
+    const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    const subtotal = isClient ? getTotal() : 0;
+    const serviceFee = subtotal * 0.1;
+    const total = subtotal + serviceFee;
+
     return (
         <div className="flex bg-slate-950 h-screen overflow-hidden p-6 gap-6">
             <Sidebar />
@@ -91,13 +105,13 @@ export default function PDVPage() {
                             className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8 pb-10"
                         >
                             {products.map((product) => (
-                                <ProductCard key={product.name} {...product} />
+                                <ProductCard key={product.id} {...product} />
                             ))}
                         </motion.div>
                     </ScrollArea>
                 </section>
 
-                {/* Lado Direito: Painel de Execução */}
+                {/* Lado Direito: Painel de Execução (Carrinho) */}
                 <aside className="flex-1 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] flex flex-col shadow-2xl overflow-hidden">
                     <header className="p-10 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">
                         <div className="flex items-center justify-between mb-10">
@@ -122,32 +136,88 @@ export default function PDVPage() {
                                     <span className="font-extrabold text-white text-lg">Italo Santos</span>
                                 </div>
                             </div>
-                            <Button variant="ghost" className="text-slate-500 hover:text-white">Editar</Button>
+                            <Button variant="ghost" className="text-slate-500 hover:text-white" onClick={clearCart}>Limpar</Button>
                         </div>
                     </header>
 
-                    <ScrollArea className="flex-1 p-10">
-                        <div className="flex flex-col gap-10 text-center py-20">
-                            <div className="relative mx-auto">
-                                <div className="absolute inset-0 bg-sky-500/20 blur-[120px] rounded-full" />
-                                <ShoppingBag className="w-32 h-32 text-slate-800 relative z-10 mx-auto opacity-40 shrink-0" />
-                            </div>
-                            <div className="space-y-4">
-                                <p className="text-white font-black text-3xl uppercase tracking-tighter italic">Fila Vazia</p>
-                                <p className="text-slate-500 font-bold max-w-xs mx-auto text-sm leading-relaxed">Sistema aguardando entrada de dados. Selecione unidades da grade do terminal para popular a execução atual.</p>
-                            </div>
-                        </div>
+                    <ScrollArea className="flex-1 p-8">
+                        <AnimatePresence mode="popLayout">
+                            {isClient && items.length > 0 ? (
+                                <div className="flex flex-col gap-6">
+                                    {items.map((item) => (
+                                        <motion.div
+                                            key={item.id}
+                                            layout
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, scale: 0.9, x: -20 }}
+                                            className="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 flex items-center gap-6 group hover:border-sky-500/30 transition-all duration-500"
+                                        >
+                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+                                                <NextImage src={item.image} alt={item.name} fill className="object-cover" />
+                                            </div>
+
+                                            <div className="flex-1 space-y-2">
+                                                <h4 className="font-black text-slate-100 uppercase tracking-tighter text-sm line-clamp-1">{item.name}</h4>
+                                                <p className="text-sky-400 font-mono font-black text-lg">
+                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="flex items-center gap-3 bg-slate-950 px-3 py-2 rounded-xl border border-white/5">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        className="text-slate-500 hover:text-sky-400 transition-colors"
+                                                    >
+                                                        <Minus className="w-4 h-4" />
+                                                    </button>
+                                                    <span className="text-white font-black font-mono w-6 text-center">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        className="text-slate-500 hover:text-sky-400 transition-colors"
+                                                    >
+                                                        <Plus className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={() => removeItem(item.id)}
+                                                    className="text-slate-800 hover:text-rose-500 transition-colors"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-10 text-center py-20">
+                                    <div className="relative mx-auto">
+                                        <div className="absolute inset-0 bg-sky-500/20 blur-[120px] rounded-full" />
+                                        <ShoppingBag className="w-32 h-32 text-slate-800 relative z-10 mx-auto opacity-40 shrink-0" />
+                                    </div>
+                                    <div className="space-y-4">
+                                        <p className="text-white font-black text-3xl uppercase tracking-tighter italic">Fila Vazia</p>
+                                        <p className="text-slate-500 font-bold max-w-xs mx-auto text-sm leading-relaxed">Sistema aguardando entrada de dados. Selecione unidades da grade do terminal para popular a execução atual.</p>
+                                    </div>
+                                </div>
+                            )}
+                        </AnimatePresence>
                     </ScrollArea>
 
                     <footer className="p-10 bg-black/40 border-t border-white/5 backdrop-blur-3xl space-y-10">
                         <div className="space-y-3">
                             <div className="flex justify-between items-center text-slate-500 px-4">
                                 <span className="font-black text-[11px] uppercase tracking-widest">Base Total</span>
-                                <span className="font-mono text-slate-300 text-lg">R$ 0,00</span>
+                                <span className="font-mono text-slate-300 text-lg">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
+                                </span>
                             </div>
                             <div className="flex justify-between items-center text-slate-500 px-4">
-                                <span className="font-black text-[11px] uppercase tracking-widest">Taxa de Serviço</span>
-                                <span className="font-mono text-slate-300 text-lg">R$ 0,00</span>
+                                <span className="font-black text-[11px] uppercase tracking-widest">Taxa de Serviço (10%)</span>
+                                <span className="font-mono text-slate-300 text-lg">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(serviceFee)}
+                                </span>
                             </div>
                         </div>
 
@@ -156,7 +226,9 @@ export default function PDVPage() {
                             <div className="relative bg-slate-900 p-8 rounded-[2.5rem] border border-white/10 flex items-center justify-between">
                                 <div className="space-y-1">
                                     <span className="text-[10px] uppercase font-black tracking-[0.3em] text-sky-400">Total a Pagar</span>
-                                    <div className="text-white font-black text-6xl tracking-tighter italic">R$ 0,00</div>
+                                    <div className="text-white font-black text-6xl tracking-tighter italic">
+                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+                                    </div>
                                 </div>
                                 <ChevronRight className="w-12 h-12 text-slate-700" />
                             </div>
