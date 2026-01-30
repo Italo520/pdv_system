@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  OPEN
+  PREPARING
+  READY
+  DELIVERED
+  CLOSED
+  CANCELLED
+}
+
+enum TableStatus {
+  FREE
+  OCCUPIED
+  BILL_REQUESTED
+  DIRTY
+}
+
+enum PaymentMethod {
+  CASH
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  VOUCHER
+}
+
+enum MovementType {
+  ENTRY
+  EXIT
+  WASTE
+  ADJUSTMENT
+}
+
+model Restaurant {
+  id               String   @id @default(cuid())
+  name             String
+  cnpj             String   @unique
+  address          String?
+  phone            String?
+  email            String?
+  logoUrl          String?
+  
+  // Fiscal Config
+  certificateA1   String? // Encrypted certificate PFX base64
+  certificatePass String? // Encrypted password
+  fiscalMode      String   @default("HOMOLOGATION") // HOMOLOGATION, PRODUCTION
+  
+  // Settings
+  serviceTax      Decimal  @default(10.0) @db.Decimal(5, 2)
+  
+  categories      Category[]
+  tables          Table[]
+  users           User[]
+  cashSessions    CashSession[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  password      String
+  role          String     @default("WAITER") // ADMIN, MANAGER, CASHIER, WAITER, KITCHEN
+  restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+  
+  orders        Order[]
+  cashSessions  CashSession[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Category {
+  id           String     @id @default(cuid())
+  name         String
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  products     Product[]
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Product {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  price        Decimal    @db.Decimal(10, 2)
+  imageUrl     String?
+  videoUrl     String?    // For the "Feed" mode
+  isAvailable  Boolean    @default(true)
+  
+  categoryId   String
+  category     Category   @relation(fields: [categoryId], references: [id])
+  
+  items        OrderItem[]
+  formulas     Formula[]  // Ficha técnica
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Formula {
+  id              String        @id @default(cuid())
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id])
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  quantity        Decimal       @db.Decimal(10, 4) // Amount used per product unit
+}
+
+model InventoryItem {
+  id           String     @id @default(cuid())
+  name         String
+  unit         String     // kg, un, l, g, ml
+  currentStock Decimal    @default(0) @db.Decimal(10, 4)
+  minStock     Decimal    @default(0) @db.Decimal(10, 4)
+  
+  formulas     Formula[]
+  movements    StockMovement[]
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model StockMovement {
+  id              String        @id @default(cuid())
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  quantity        Decimal       @db.Decimal(10, 4)
+  type            MovementType
+  reason          String?       // SALE, LOSS, PURCHASE, etc.
+  
+  createdAt       DateTime      @default(now())
+}
+
+model Table {
+  id           String      @id @default(cuid())
+  number       Int
+  status       TableStatus @default(FREE)
+  xPosition    Int         @default(0)
+  yPosition    Int         @default(0)
+  restaurantId String
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  
+  orders       Order[]
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  status        OrderStatus   @default(OPEN)
+  totalAmount   Decimal       @default(0) @db.Decimal(10, 2)
+  serviceTax    Decimal       @default(0) @db.Decimal(10, 2)
+  
+  tableId       String?
+  table         Table?        @relation(fields: [tableId], references: [id])
+  waiterId      String?
+  waiter        User?         @relation(fields: [waiterId], references: [id])
+  
+  items         OrderItem[]
+  payments      Payment[]
+  fiscalNfce    FiscalNfce?
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model OrderItem {
+  id            String      @id @default(cuid())
+  orderId       String
+  order         Order       @relation(fields: [orderId], references: [id])
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  quantity      Int         @default(1)
+  unitPrice     Decimal     @db.Decimal(10, 2)
+  notes         String?
+  status        OrderStatus @default(OPEN) // Specific item status (for KDS)
+  
+  createdAt     DateTime    @default(now())
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  orderId       String
+  order         Order         @relation(fields: [orderId], references: [id])
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  
+  createdAt     DateTime      @default(now())
+}
+
+model CashSession {
+  id            String     @id @default(cuid())
+  openedById    String
+  openedBy      User       @relation(fields: [openedById], references: [id])
+  restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+  
+  openingAmount Decimal    @db.Decimal(10, 2)
+  closingAmount Decimal?   @db.Decimal(10, 2)
+  status        String     @default("OPEN") // OPEN, CLOSED
+  
+  transactions  Transaction[]
+  
+  openedAt      DateTime   @default(now())
+  closedAt      DateTime?
+}
+
+model Transaction {
+  id             String      @id @default(cuid())
+  cashSessionId  String
+  cashSession    CashSession @relation(fields: [cashSessionId], references: [id])
+  amount         Decimal     @db.Decimal(10, 2)
+  type           String      // INCOME, OUTCOME (Sangria/Reforço)
+  description    String?
+  
+  createdAt      DateTime    @default(now())
+}
+
+model FiscalNfce {
+  id            String   @id @default(cuid())
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id])
+  xmlContent    String   @db.Text
+  accessKey     String   @unique
+  protocol      String?
+  status        String   // AUTHORIZED, REJECTED, CANCELLED
+  
+  createdAt     DateTime @default(now())
+}
