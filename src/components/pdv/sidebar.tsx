@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 const menuItems = [
-    { icon: Home, label: "Home", href: "/pdv" },
-    { icon: LayoutDashboard, label: "Tables", href: "/pdv/tables" },
-    { icon: UtensilsCrossed, label: "Kitchen", href: "/pdv/kds" },
-    { icon: Package, label: "Stock", href: "/pdv/inventory" },
-    { icon: Settings, label: "System", href: "/pdv/settings" },
+    { icon: Home, label: "Início", href: "/pdv" },
+    { icon: LayoutDashboard, label: "Mesas", href: "/pdv/tables" },
+    { icon: UtensilsCrossed, label: "Cozinha", href: "/pdv/kds" },
+    { icon: Package, label: "Estoque", href: "/pdv/inventory" },
+    { icon: Settings, label: "Sistema", href: "/pdv/settings" },
 ];
 
 export function Sidebar() {

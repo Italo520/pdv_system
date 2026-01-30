@@ -5,21 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock, CheckCircle2, AlertTriangle, ChefHat, Timer, Hash, ArrowRight, Zap, RefreshCw } from "lucide-react";
+import { ChefHat, Timer, Hash, ArrowRight, RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const mockOrders = [
     {
         id: "102", table: "05", waiter: "João", time: "12 min", status: "preparing", items: [
-            { name: "Classic Burger", qty: 2, notes: "No Onions" },
-            { name: "Rustic Fries", qty: 1 }
+            { name: "Hambúrguer Clássico", qty: 2, notes: "Sem Cebola" },
+            { name: "Fritas Rústicas", qty: 1 }
         ]
     },
     {
         id: "103", table: "12", waiter: "Maria", time: "8 min", status: "preparing", items: [
             { name: "Pizza Margherita", qty: 1 },
-            { name: "Orange Juice", qty: 2 }
+            { name: "Suco de Laranja", qty: 2 }
         ]
     },
     {
@@ -30,7 +30,7 @@ const mockOrders = [
     },
     {
         id: "101", table: "03", waiter: "Maria", time: "25 min", status: "ready", items: [
-            { name: "Classic Burger", qty: 3 }
+            { name: "Hambúrguer Clássico", qty: 3 }
         ]
     },
 ];
@@ -50,10 +50,10 @@ export default function KDSPage() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Production Lab</h1>
+                            <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Laboratório de Produção</h1>
                             <div className="flex items-center gap-4">
-                                <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1 font-black text-[10px] tracking-widest uppercase">Live Engine</Badge>
-                                <span className="text-slate-600 font-bold text-xs uppercase tracking-widest">Efficiency Rate: 98.2%</span>
+                                <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1 font-black text-[10px] tracking-widest uppercase">Motor em Tempo Real</Badge>
+                                <span className="text-slate-600 font-bold text-xs uppercase tracking-widest">Taxa de Eficiência: 98.2%</span>
                             </div>
                         </div>
                     </div>
@@ -61,7 +61,7 @@ export default function KDSPage() {
                     <div className="flex gap-6">
                         <div className="flex bg-slate-900/50 backdrop-blur-xl px-8 py-4 rounded-[2rem] border border-white/5 items-center gap-6">
                             <div className="text-right">
-                                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block">Global Pulse</span>
+                                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block">Pulso Global</span>
                                 <span className="font-mono text-2xl text-white font-black tracking-tighter italic">12:45:32</span>
                             </div>
                             <div className="w-4 h-4 bg-sky-500 rounded-full animate-ping opacity-75" />
@@ -74,9 +74,9 @@ export default function KDSPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 flex-1 overflow-hidden">
                     {[
-                        { label: "Incoming", status: "new", color: "text-amber-500", glow: "shadow-amber-500/20" },
-                        { label: "Active Prep", status: "preparing", color: "text-sky-400", glow: "shadow-sky-400/20" },
-                        { label: "Ready Line", status: "ready", color: "text-emerald-500", glow: "shadow-emerald-500/20" }
+                        { label: "Entrada", status: "new", color: "text-amber-500", glow: "shadow-amber-500/20" },
+                        { label: "Preparando", status: "preparing", color: "text-sky-400", glow: "shadow-sky-400/20" },
+                        { label: "Pronto para Entrega", status: "ready", color: "text-emerald-500", glow: "shadow-emerald-500/20" }
                     ].map((col) => {
                         const ordersInCol = mockOrders.filter(o => {
                             if (col.status === "new") return o.status === "new";
@@ -97,7 +97,7 @@ export default function KDSPage() {
                                 <ScrollArea className="flex-1 pr-4">
                                     <div className="flex flex-col gap-10 pb-10">
                                         <AnimatePresence mode="popLayout">
-                                            {ordersInCol.map((order, idx) => (
+                                            {ordersInCol.map((order) => (
                                                 <motion.div
                                                     key={order.id}
                                                     layout
@@ -112,7 +112,7 @@ export default function KDSPage() {
                                                                 <div>
                                                                     <div className="flex items-center gap-2 text-slate-500 mb-2">
                                                                         <Hash className="w-3 h-3" />
-                                                                        <span className="text-[9px] font-black tracking-[0.2em] uppercase">Sector</span>
+                                                                        <span className="text-[9px] font-black tracking-[0.2em] uppercase">Setor</span>
                                                                     </div>
                                                                     <h3 className="font-black text-7xl tracking-tighter text-white italic leading-none">{order.table}</h3>
                                                                 </div>
@@ -151,7 +151,7 @@ export default function KDSPage() {
                                                                         whileTap={{ scale: 0.98 }}
                                                                         className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter bg-white text-slate-950 flex items-center justify-center gap-4 shadow-2xl transition-all"
                                                                     >
-                                                                        Initialize <ArrowRight className="w-6 h-6" />
+                                                                        Inicializar <ArrowRight className="w-6 h-6" />
                                                                     </motion.button>
                                                                 )}
                                                                 {order.status === 'preparing' && (
@@ -160,7 +160,7 @@ export default function KDSPage() {
                                                                         whileTap={{ scale: 0.98 }}
                                                                         className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter bg-sky-500 text-white flex items-center justify-center gap-4 shadow-2xl shadow-sky-500/40 transition-all group"
                                                                     >
-                                                                        Execute Commit <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                                                                        Confirmar Preparo <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                                                                     </motion.button>
                                                                 )}
                                                                 {order.status === 'ready' && (
@@ -169,7 +169,7 @@ export default function KDSPage() {
                                                                         whileTap={{ scale: 0.98 }}
                                                                         className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter border-2 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 flex items-center justify-center gap-4 transition-all"
                                                                     >
-                                                                        <CheckCircle2 className="w-7 h-7" /> Handover Complete
+                                                                        <CheckCircle2 className="w-7 h-7" /> Entrega Realizada
                                                                     </motion.button>
                                                                 )}
                                                             </div>

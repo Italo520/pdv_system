@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { Plus, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
@@ -45,7 +44,7 @@ export function ProductCard({ name, price, image, category }: ProductCardProps) 
 
                     <div className="flex items-center justify-between pt-6 border-t border-white/5">
                         <div className="space-y-1">
-                            <span className="text-slate-500 text-[9px] uppercase font-black tracking-widest block">Investment</span>
+                            <span className="text-slate-500 text-[9px] uppercase font-black tracking-widest block">Investimento</span>
                             <span className="text-slate-100 font-extrabold text-2xl tracking-tighter">
                                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
                             </span>
