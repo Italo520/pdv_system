@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { OpenTableModal } from "@/components/pdv/open-table-modal";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ClosedOrdersHistory } from "@/components/pdv/closed-orders-history";
 
 const tableStatusConfigs = {
     FREE: { label: "Livre", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
@@ -120,6 +121,7 @@ export function TablesMap({ initialTables }: TablesMapProps) {
                         </div>
 
                         <div className="flex gap-2">
+                            <ClosedOrdersHistory />
                             <Button size="sm" className="btn-primary h-10 px-4 rounded-xl text-xs uppercase tracking-tight gap-1.5 shadow-lg shadow-primary/10" onClick={() => { setSelectedTable(null); setIsModalOpen(true); }}>
                                 <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Abrir Mesa</span>
                             </Button>

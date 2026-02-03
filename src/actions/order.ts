@@ -139,3 +139,35 @@ export async function getOrdersByTable(tableId: string) {
         return [];
     }
 }
+// ... existing code ...
+
+export async function getClosedOrders() {
+    try {
+        const closedOrders = await prisma.order.findMany({
+            where: {
+                status: 'CLOSED',
+                updatedAt: {
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24h
+                }
+            },
+            include: {
+                table: true,
+                waiter: true,
+                items: {
+                    include: {
+                        product: true
+                    }
+                }
+            },
+            orderBy: {
+                updatedAt: 'desc'
+            },
+            take: 50
+        });
+
+        return closedOrders;
+    } catch (error) {
+        console.error("Error fetching closed orders:", error);
+        return [];
+    }
+}

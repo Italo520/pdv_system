@@ -174,11 +174,11 @@ Desenvolver um sistema PDV (Ponto de Venda) completo e integrado em Next.js, esp
 **[RF-002] Abertura e Gestão de Comandas**
 - **Descrição**: Permitir abertura de comandas individuais ou por mesa
 - **Critérios de Aceitação**:
-  - [ ] Abertura rápida com número de comanda ou mesa
-  - [ ] Atribuição de garçom responsável
-  - [ ] Registro de horário de abertura
-  - [ ] Suporte a múltiplas comandas por mesa
-  - [ ] Histórico de comandas fechadas (últimas 24h acessível rapidamente)
+  - [x] Abertura rápida com número de comanda ou mesa
+  - [x] Atribuição de garçom responsável
+  - [x] Registro de horário de abertura
+  - [x] Suporte a múltiplas comandas por mesa
+  - [x] Histórico de comandas fechadas (últimas 24h acessível rapidamente)
 - **Prioridade**: P0-Crítico
 
 **[RF-003] Transferência de Itens entre Mesas/Comandas**
