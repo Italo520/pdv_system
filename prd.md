@@ -163,11 +163,12 @@ Desenvolver um sistema PDV (Ponto de Venda) completo e integrado em Next.js, esp
 **[RF-001] Gestão Visual de Mesas**
 - **Descrição**: Sistema deve exibir mapa visual de mesas com status em tempo real
 - **Critérios de Aceitação**:
-  - [ ] Visualização de layout de mesas configurável (arrastar e soltar)
-  - [ ] Status visual: Livre (verde), Ocupada (amarelo), Conta Solicitada (laranja), Suja (vermelho)
-  - [ ] Atualização em tempo real via WebSocket
-  - [ ] Filtro por área/salão
-  - [ ] Tempo de ocupação visível em cada mesa
+  - [x] Ordenação crescente automática por número de mesa
+  - [x] Status visual: Livre (verde), Ocupada (amarelo), Conta Solicitada (laranja), Suja (vermelho)
+  - [x] Atualização em tempo real via WebSocket
+  - [x] Filtro por área/salão
+  - [x] Tempo de ocupação visível em cada mesa
+  - [ ] Validação: Não permitir criação de mesas com número duplicado
 - **Prioridade**: P0-Crítico
 
 **[RF-002] Abertura e Gestão de Comandas**

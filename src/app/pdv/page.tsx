@@ -3,7 +3,7 @@
 import { Sidebar } from "@/components/pdv/sidebar";
 import { ProductCard } from "@/components/pdv/product-card";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingBag, User, Receipt, Filter, ChevronRight, LayoutGrid, CircleUser, ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
+import { Search, ShoppingBag, User, Receipt, Filter, ChevronRight, LayoutGrid, CircleUser, ArrowRight, Minus, Plus, Trash2, ChevronLeft, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,11 +23,15 @@ const products = [
     { id: "p6", name: "Suco de Laranja", price: 12.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&q=80" },
     { id: "p7", name: "Petit Gateau", price: 24.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" },
     { id: "p8", name: "Onion Rings", price: 20.00, category: "Entradas", image: "https://images.unsplash.com/photo-1639024471283-035188835118?w=400&q=80" },
+    { id: "p9", name: "Milkshake Morango", price: 18.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc69d?w=400&q=80" },
+    { id: "p10", name: "Água Mineral", price: 4.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1564419320461-6870880221ad?w=400&q=80" },
 ];
 
 export default function PDVPage() {
     const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
     const [isClient, setIsClient] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState("Todos");
+    const [isCartOpen, setIsCartOpen] = useState(true);
 
     useEffect(() => {
         setIsClient(true);
@@ -37,58 +41,80 @@ export default function PDVPage() {
     const serviceFee = subtotal * 0.1;
     const total = subtotal + serviceFee;
 
-    return (
-        <div className="flex bg-slate-950 h-screen overflow-hidden p-6 gap-6">
-            <Sidebar />
+    const filteredProducts = selectedCategory === "Todos"
+        ? products
+        : products.filter(p => p.category === selectedCategory);
 
-            <main className="flex-1 ml-32 flex gap-6 overflow-hidden">
-                {/* Lado Esquerdo: Seleção de Produtos */}
-                <section className="flex-[1.5] flex flex-col gap-8 overflow-hidden">
-                    <header className="flex flex-col gap-10">
+    return (
+        <div className="flex bg-background h-screen w-screen overflow-hidden font-sans text-foreground selection:bg-primary/30">
+            {/* Sidebar Fixa */}
+            <div className="h-full shrink-0 p-3 z-50">
+                <Sidebar className="w-20" />
+            </div>
+
+            <main className="flex-1 flex gap-4 py-3 pr-3 overflow-hidden max-w-full relative">
+
+                {/* Product Section */}
+                <div className="flex-1 flex flex-col gap-4 overflow-hidden min-w-0">
+                    <header className="flex flex-col gap-4 shrink-0">
+                        {/* Top Bar */}
                         <div className="flex items-center justify-between">
-                            <div className="space-y-1">
-                                <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic">Terminal PDV</h1>
-                                <div className="flex items-center gap-3 text-slate-500">
-                                    <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
-                                    <span className="text-xs font-black tracking-widest uppercase">Sistema Operacional • Estação 01</span>
+                            <div className="space-y-0.5">
+                                <div className="flex items-center gap-3">
+                                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground uppercase italic font-display">
+                                        Terminal PDV
+                                    </h1>
+                                    {!isCartOpen && (
+                                        <Button
+                                            onClick={() => setIsCartOpen(true)}
+                                            className="h-9 w-9 md:h-10 md:w-10 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all ml-2 border border-primary/20"
+                                        >
+                                            <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
+                                        </Button>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
+                                    <span className="text-[10px] font-bold tracking-widest uppercase">Estação 01 • Online</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <Button variant="outline" className="h-16 w-16 rounded-3xl bg-slate-900 border-white/5 text-slate-400 group">
-                                    <LayoutGrid className="w-6 h-6 group-hover:text-sky-400 transition-colors" />
-                                </Button>
-                                <div className="h-16 px-6 bg-slate-900 rounded-3xl border border-white/5 flex items-center gap-4 text-slate-300">
-                                    <CircleUser className="w-8 h-8 text-sky-400" />
+
+                            <div className="flex items-center gap-3">
+                                <div className="hidden md:flex h-12 px-4 bg-card rounded-xl border border-border/50 items-center gap-3 text-muted-foreground shadow-sm">
+                                    <CircleUser className="w-6 h-6 text-primary" />
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] font-black uppercase tracking-tighter leading-none">Operador</span>
-                                        <span className="font-bold">ITALO S.</span>
+                                        <span className="text-[9px] font-black uppercase tracking-tighter leading-none text-muted-foreground/70">Operador</span>
+                                        <span className="font-bold text-foreground text-xs">ITALO S.</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
+                        {/* Search & Filters */}
+                        <div className="flex gap-2">
                             <div className="relative flex-1 group">
-                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-700 group-focus-within:text-sky-400 transition-colors" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                 <Input
-                                    placeholder="PESQUISAR CÓDIGO OU NOME DO PRODUTO..."
-                                    className="pl-16 h-20 rounded-[2rem] bg-slate-900/50 border-white/5 text-2xl font-black placeholder:text-slate-800 focus-visible:ring-sky-500/30 sky-glow shadow-2xl uppercase tracking-tighter"
+                                    placeholder="PESQUISAR CÓDIGO OU NOME..."
+                                    className="pl-10 h-12 rounded-xl bg-card border-border text-base font-bold placeholder:text-muted-foreground/50 focus-visible:ring-primary/20 focus-visible:border-primary/50 shadow-sm uppercase tracking-tight"
                                 />
                             </div>
-                            <Button className="h-20 w-20 rounded-[2rem] bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/20">
-                                <Filter className="w-8 h-8" />
+                            <Button className="btn-primary h-12 w-12 p-0 rounded-xl shadow-lg shadow-primary/20 shrink-0">
+                                <Filter className="w-5 h-5" />
                             </Button>
                         </div>
 
-                        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
-                            {categories.map((cat, i) => (
+                        {/* Categories */}
+                        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none mask-fade-right">
+                            {categories.map((cat) => (
                                 <button
                                     key={cat}
+                                    onClick={() => setSelectedCategory(cat)}
                                     className={cn(
-                                        "px-10 py-5 rounded-3xl text-sm font-black transition-all duration-500 whitespace-nowrap uppercase tracking-widest",
-                                        i === 0
-                                            ? "bg-gradient-to-br from-sky-400 to-indigo-600 text-white shadow-[0_20px_40px_-10px_rgba(56,189,248,0.4)]"
-                                            : "bg-slate-900/50 text-slate-500 hover:text-white hover:bg-slate-800 border border-white/5"
+                                        "px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 whitespace-nowrap uppercase tracking-wide border shrink-0",
+                                        selectedCategory === cat
+                                            ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-105"
+                                            : "bg-card text-muted-foreground border-border hover:bg-secondary hover:text-foreground hover:border-primary/30"
                                     )}
                                 >
                                     {cat}
@@ -97,153 +123,190 @@ export default function PDVPage() {
                         </div>
                     </header>
 
-                    <ScrollArea className="flex-1 -mx-4 px-4 pr-6">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8 pb-10"
+                    {/* Scrollable Product Grid */}
+                    <div className="flex-1 relative -mr-3 pr-3 overflow-hidden">
+                        <ScrollArea className="h-full w-full pr-3">
+                            <motion.div
+                                key={selectedCategory}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                classMode="wait"
+                                className={cn(
+                                    "grid gap-3 pb-20",
+                                    isCartOpen
+                                        ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                                        : "grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7"
+                                )}
+                            >
+                                {filteredProducts.map((product) => (
+                                    <ProductCard key={product.id} {...product} />
+                                ))}
+                            </motion.div>
+                        </ScrollArea>
+                    </div>
+                </div>
+
+                {/* Collapsible Cart Aside */}
+                <AnimatePresence mode="wait">
+                    {isCartOpen && (
+                        <motion.aside
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 380, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className="shrink-0 h-full bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2rem] flex flex-col shadow-2xl shadow-black/50 overflow-hidden relative z-40 hidden lg:flex"
                         >
-                            {products.map((product) => (
-                                <ProductCard key={product.id} {...product} />
-                            ))}
-                        </motion.div>
-                    </ScrollArea>
-                </section>
+                            {/* Close Button */}
+                            <Button
+                                onClick={() => setIsCartOpen(false)}
+                                variant="ghost"
+                                className="absolute top-4 right-4 z-50 h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/10"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </Button>
 
-                {/* Lado Direito: Painel de Execução (Carrinho) */}
-                <aside className="flex-1 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] flex flex-col shadow-2xl overflow-hidden">
-                    <header className="p-10 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">
-                        <div className="flex items-center justify-between mb-10">
-                            <div className="space-y-2">
-                                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-sky-400 flex items-center gap-2">
-                                    <div className="w-1 h-3 bg-sky-400 rounded-full" /> Ordem de Execução
-                                </span>
-                                <h2 className="font-black text-5xl tracking-tighter text-white uppercase italic">Sessão #245</h2>
-                            </div>
-                            <div className="px-5 py-2 bg-slate-900 rounded-2xl border border-white/5 text-slate-400 font-extrabold text-xs tracking-widest uppercase">
-                                Mesa 12
-                            </div>
-                        </div>
+                            {/* Background Glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
-                        <div className="bg-slate-950/50 p-6 rounded-[2rem] border border-white/5 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-sky-500/10 rounded-2xl flex items-center justify-center text-sky-400">
-                                    <User className="w-6 h-6" />
+                            <header className="p-6 border-b border-border/30 bg-gradient-to-b from-card/50 to-transparent shrink-0">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[9px] uppercase font-black tracking-[0.2em] text-primary flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" /> Ordem Atual
+                                        </span>
+                                        <h2 className="font-display font-black text-3xl tracking-tighter text-foreground uppercase italic">#245</h2>
+                                    </div>
+                                    <div className="px-3 py-1 bg-secondary/50 rounded-lg border border-border/50 text-muted-foreground font-bold text-[10px] tracking-wider uppercase">
+                                        Mesa 12
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Cliente Alvo</span>
-                                    <span className="font-extrabold text-white text-lg">Italo Santos</span>
+
+                                <div className="bg-secondary/30 p-3 rounded-xl border border-border/30 flex items-center justify-between group hover:border-primary/20 transition-colors cursor-pointer">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                            <User className="w-4 h-4" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Cliente</span>
+                                            <span className="font-bold text-foreground text-sm">Italo Santos</span>
+                                        </div>
+                                    </div>
+                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-7 text-[10px] font-bold uppercase tracking-wider px-2" onClick={clearCart}>
+                                        Limpar
+                                    </Button>
                                 </div>
-                            </div>
-                            <Button variant="ghost" className="text-slate-500 hover:text-white" onClick={clearCart}>Limpar</Button>
-                        </div>
-                    </header>
+                            </header>
 
-                    <ScrollArea className="flex-1 p-8">
-                        <AnimatePresence mode="popLayout">
-                            {isClient && items.length > 0 ? (
-                                <div className="flex flex-col gap-6">
-                                    {items.map((item) => (
-                                        <motion.div
-                                            key={item.id}
-                                            layout
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, scale: 0.9, x: -20 }}
-                                            className="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 flex items-center gap-6 group hover:border-sky-500/30 transition-all duration-500"
-                                        >
-                                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0">
-                                                <NextImage src={item.image} alt={item.name} fill className="object-cover" />
-                                            </div>
-
-                                            <div className="flex-1 space-y-2">
-                                                <h4 className="font-black text-slate-100 uppercase tracking-tighter text-sm line-clamp-1">{item.name}</h4>
-                                                <p className="text-sky-400 font-mono font-black text-lg">
-                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}
-                                                </p>
-                                            </div>
-
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="flex items-center gap-3 bg-slate-950 px-3 py-2 rounded-xl border border-white/5">
-                                                    <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                        className="text-slate-500 hover:text-sky-400 transition-colors"
+                            <div className="flex-1 min-h-0 overflow-hidden">
+                                <ScrollArea className="h-full w-full px-4">
+                                    <AnimatePresence mode="popLayout">
+                                        {isClient && items.length > 0 ? (
+                                            <div className="flex flex-col gap-3 py-4">
+                                                {items.map((item) => (
+                                                    <motion.div
+                                                        key={item.id}
+                                                        layout
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.9, x: -20 }}
+                                                        className="bg-secondary/40 p-3 rounded-xl border border-border/30 flex items-center gap-3 group hover:border-primary/30 hover:bg-secondary/60 transition-all duration-300 relative overflow-hidden"
                                                     >
-                                                        <Minus className="w-4 h-4" />
-                                                    </button>
-                                                    <span className="text-white font-black font-mono w-6 text-center">{item.quantity}</span>
-                                                    <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                        className="text-slate-500 hover:text-sky-400 transition-colors"
-                                                    >
-                                                        <Plus className="w-4 h-4" />
-                                                    </button>
+                                                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-secondary">
+                                                            <NextImage src={item.image} alt={item.name} fill className="object-cover" />
+                                                        </div>
+
+                                                        <div className="flex-1 space-y-0.5 min-w-0">
+                                                            <h4 className="font-bold text-foreground uppercase tracking-tight text-xs line-clamp-1 group-hover:text-primary transition-colors">{item.name}</h4>
+                                                            <p className="text-primary font-mono font-bold text-xs">
+                                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="flex flex-col items-center gap-1.5 shrink-0">
+                                                            <div className="flex items-center gap-1.5 bg-background/50 px-1.5 py-1 rounded-lg border border-border/30">
+                                                                <button
+                                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                                    className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+                                                                >
+                                                                    <Minus className="w-3 h-3" />
+                                                                </button>
+                                                                <span className="text-foreground font-mono font-bold text-xs w-4 text-center">{item.quantity}</span>
+                                                                <button
+                                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                                    className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+                                                                >
+                                                                    <Plus className="w-3 h-3" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <button
+                                                            onClick={() => removeItem(item.id)}
+                                                            className="absolute top-1 right-1 p-1 text-muted-foreground/30 hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                                                        >
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </button>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col gap-4 text-center py-20 items-center justify-center opacity-50">
+                                                <div className="relative">
+                                                    <div className="absolute inset-0 bg-primary/20 blur-[40px] rounded-full" />
+                                                    <ShoppingBag className="w-16 h-16 text-muted-foreground relative z-10" />
                                                 </div>
-                                                <button
-                                                    onClick={() => removeItem(item.id)}
-                                                    className="text-slate-800 hover:text-rose-500 transition-colors"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <div className="space-y-1 max-w-[180px]">
+                                                    <p className="text-foreground font-bold text-base uppercase tracking-tight">Fila Vazia</p>
+                                                    <p className="text-muted-foreground text-[10px] leading-relaxed">Selecione itens ao lado para iniciar o pedido.</p>
+                                                </div>
                                             </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-10 text-center py-20">
-                                    <div className="relative mx-auto">
-                                        <div className="absolute inset-0 bg-sky-500/20 blur-[120px] rounded-full" />
-                                        <ShoppingBag className="w-32 h-32 text-slate-800 relative z-10 mx-auto opacity-40 shrink-0" />
-                                    </div>
-                                    <div className="space-y-4">
-                                        <p className="text-white font-black text-3xl uppercase tracking-tighter italic">Fila Vazia</p>
-                                        <p className="text-slate-500 font-bold max-w-xs mx-auto text-sm leading-relaxed">Sistema aguardando entrada de dados. Selecione unidades da grade do terminal para popular a execução atual.</p>
-                                    </div>
-                                </div>
-                            )}
-                        </AnimatePresence>
-                    </ScrollArea>
-
-                    <footer className="p-10 bg-black/40 border-t border-white/5 backdrop-blur-3xl space-y-10">
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center text-slate-500 px-4">
-                                <span className="font-black text-[11px] uppercase tracking-widest">Base Total</span>
-                                <span className="font-mono text-slate-300 text-lg">
-                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
-                                </span>
+                                        )}
+                                    </AnimatePresence>
+                                </ScrollArea>
                             </div>
-                            <div className="flex justify-between items-center text-slate-500 px-4">
-                                <span className="font-black text-[11px] uppercase tracking-widest">Taxa de Serviço (10%)</span>
-                                <span className="font-mono text-slate-300 text-lg">
-                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(serviceFee)}
-                                </span>
-                            </div>
-                        </div>
 
-                        <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-indigo-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                            <div className="relative bg-slate-900 p-8 rounded-[2.5rem] border border-white/10 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <span className="text-[10px] uppercase font-black tracking-[0.3em] text-sky-400">Total a Pagar</span>
-                                    <div className="text-white font-black text-6xl tracking-tighter italic">
-                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+                            <footer className="p-6 bg-card/90 border-t border-border/50 backdrop-blur-xl space-y-4 shrink-0 z-20">
+                                {/* Totals */}
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between items-center text-muted-foreground px-1">
+                                        <span className="font-bold text-[10px] uppercase tracking-wider">Subtotal</span>
+                                        <span className="font-mono text-foreground text-xs">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-muted-foreground px-1">
+                                        <span className="font-bold text-[10px] uppercase tracking-wider">Taxa (10%)</span>
+                                        <span className="font-mono text-foreground text-xs">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(serviceFee)}
+                                        </span>
                                     </div>
                                 </div>
-                                <ChevronRight className="w-12 h-12 text-slate-700" />
-                            </div>
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-6">
-                            <Button variant="outline" className="h-20 rounded-[2rem] bg-slate-900 border-white/10 text-white font-black text-xl uppercase tracking-tighter gap-4 hover:bg-slate-800 transition-all">
-                                <Receipt className="w-8 h-8 text-slate-600" /> Imprimir
-                            </Button>
-                            <Button className="h-20 rounded-[2rem] bg-gradient-to-br from-sky-400 to-indigo-600 text-white font-black text-2xl uppercase tracking-tighter gap-4 shadow-2xl shadow-sky-500/30 hover:scale-[1.02] transition-all">
-                                Finalizar <ArrowRight className="w-8 h-8" />
-                            </Button>
-                        </div>
-                    </footer>
-                </aside>
+                                {/* Grand Total */}
+                                <div className="relative group cursor-pointer overflow-hidden rounded-xl">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div className="relative bg-secondary/30 p-4 flex items-center justify-between border border-border/50 group-hover:border-primary/30 transition-colors">
+                                        <div className="space-y-0.5">
+                                            <span className="text-[9px] uppercase font-black tracking-[0.2em] text-primary">Total Final</span>
+                                            <div className="text-foreground font-display font-black text-3xl tracking-tighter text-glow">
+                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Button variant="outline" className="h-12 rounded-xl border-border/50 text-muted-foreground font-bold text-xs uppercase tracking-wide gap-2 hover:bg-secondary hover:text-foreground hover:border-primary/20 transition-all">
+                                        <Receipt className="w-4 h-4" /> Imprimir
+                                    </Button>
+                                    <Button className="btn-primary h-12 rounded-xl text-base uppercase tracking-tight gap-2 shadow-xl shadow-primary/20 hover:shadow-primary/30">
+                                        Finalizar <ArrowRight className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            </footer>
+                        </motion.aside>
+                    )}
+                </AnimatePresence>
             </main>
         </div>
     );

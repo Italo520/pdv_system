@@ -1,79 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
-@import "tw-animate-css";
+
+
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: 'Fira Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, monospace;
+  --font-display: 'Fira Code', monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-display: 'Outfit', sans-serif;
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* THEME 1: VIBRANT (Client Portal/General) */
 :root {
-  --radius: 1rem;
-  --background: #fdfcfb;
-  --foreground: #1c1917;
-  --card: #ffffff;
-  --card-foreground: #1c1917;
-  --popover: #ffffff;
-  --popover-foreground: #1c1917;
-  --primary: #dc2626;
-  --primary-foreground: #ffffff;
-  --secondary: #fef2f2;
-  --secondary-foreground: #991b1b;
-  --muted: #f5f5f4;
-  --muted-foreground: #78716c;
-  --accent: #ca8a04;
-  --accent-foreground: #ffffff;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #e7e5e4;
-  --input: #e7e5e4;
-  --ring: #dc2626;
-}
-
-/* THEME 2: DEEP OCEAN PRO (PDV Dashboard) */
-.pro-theme {
-  --radius: 1.5rem;
-  --background: #020617;
+  /* DARK MODE (OLED) DEFAULT */
+  --background: #050505;
+  /* Deep Black for OLED */
   --foreground: #f8fafc;
+  /* Slate 50 */
+
   --card: #0f172a;
+  /* Slate 900 */
   --card-foreground: #f1f5f9;
-  --primary: #38bdf8;
-  --primary-foreground: #082f49;
+  /* Slate 100 */
+
+  --popover: #0f172a;
+  --popover-foreground: #f1f5f9;
+
+  --primary: #3B82F6;
+  /* Trust Blue from Master */
+  --primary-foreground: #ffffff;
+
   --secondary: #1e293b;
+  /* Slate 800 */
   --secondary-foreground: #94a3b8;
+  /* Slate 400 */
+
   --muted: #1e293b;
   --muted-foreground: #64748b;
-  --accent: #0ea5e9;
+
+  --accent: #F97316;
+  /* CTA Orange from Master */
   --accent-foreground: #ffffff;
-  --destructive: #f43f5e;
+
+  --destructive: #ef4444;
+  /* Red 500 */
   --destructive-foreground: #ffffff;
+
   --border: #1e293b;
   --input: #1e293b;
-  --ring: #38bdf8;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  --ring: #3B82F6;
+
+  --radius: 1rem;
+
+  /* Spacing Tokens */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
 }
 
 @layer base {
@@ -82,30 +101,40 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/20;
+    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary-foreground;
   }
 
   h1,
   h2,
   h3,
-  h4 {
-    @apply font-display tracking-tight font-extrabold;
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight font-bold;
   }
 }
 
 @layer components {
+  /* Design System Components from MASTER.md */
 
-  /* Ocean Depth Cards */
-  .ocean-card {
-    @apply relative overflow-hidden bg-slate-900 shadow-2xl border border-white/5 rounded-[2rem] p-6 transition-all duration-500;
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer hover:opacity-90 hover:-translate-y-[1px] active:scale-95 shadow-lg shadow-primary/20;
   }
 
-  /* Smooth UI Button Class */
-  .btn-smooth {
-    @apply relative overflow-hidden h-14 px-8 rounded-2xl font-display font-bold transition-all duration-500 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50;
+  .btn-secondary {
+    @apply bg-transparent text-primary border-2 border-primary px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer hover:bg-primary/10 active:scale-95;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400;
+  .card-base {
+    @apply bg-card text-card-foreground rounded-xl p-6 shadow-md border border-white/5 transition-all duration-200 cursor-pointer hover:shadow-xl hover:-translate-y-0.5;
+  }
+
+  .input-base {
+    @apply px-4 py-3 border border-border rounded-lg bg-secondary/50 text-foreground transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 placeholder:text-muted-foreground;
+  }
+
+  /* Utilities */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
   }
 }

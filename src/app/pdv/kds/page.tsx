@@ -37,46 +37,48 @@ const mockOrders = [
 
 export default function KDSPage() {
     return (
-        <div className="flex bg-slate-950 h-screen overflow-hidden p-6 gap-6">
-            <Sidebar />
+        <div className="flex bg-background h-screen w-screen overflow-hidden font-sans text-foreground">
+            <div className="h-full shrink-0 p-4 md:p-6 z-50">
+                <Sidebar />
+            </div>
 
-            <main className="flex-1 ml-32 flex flex-col gap-10 overflow-hidden">
-                <header className="flex items-center justify-between">
-                    <div className="flex items-center gap-10">
+            <main className="flex-1 flex flex-col gap-6 py-4 md:py-6 pr-4 md:pr-6 overflow-hidden max-w-full relative">
+                <header className="flex items-center justify-between flex-wrap gap-6 shrink-0">
+                    <div className="flex items-center gap-8">
                         <div className="relative group">
-                            <div className="absolute -inset-4 bg-sky-500/20 blur-[60px] rounded-full opacity-50 transition-opacity" />
-                            <div className="p-8 bg-slate-900 rounded-[2.5rem] text-sky-400 border border-white/5 relative z-10">
-                                <ChefHat className="w-14 h-14" />
+                            <div className="absolute -inset-4 bg-primary/20 blur-[60px] rounded-full opacity-50 transition-opacity" />
+                            <div className="p-6 bg-card rounded-3xl text-primary border border-border relative z-10 shadow-lg shadow-primary/10">
+                                <ChefHat className="w-10 h-10" />
                             </div>
                         </div>
-                        <div className="space-y-2">
-                            <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Laboratório de Produção</h1>
+                        <div className="space-y-1">
+                            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-foreground uppercase italic font-display leading-none">Cozinha (KDS)</h1>
                             <div className="flex items-center gap-4">
-                                <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1 font-black text-[10px] tracking-widest uppercase">Motor em Tempo Real</Badge>
-                                <span className="text-slate-600 font-bold text-xs uppercase tracking-widest">Taxa de Eficiência: 98.2%</span>
+                                <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 font-bold text-[10px] tracking-widest uppercase shadow-sm">Tempo Real</Badge>
+                                <span className="text-muted-foreground font-bold text-xs uppercase tracking-widest">Eficiência: 98.2%</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex gap-6">
-                        <div className="flex bg-slate-900/50 backdrop-blur-xl px-8 py-4 rounded-[2rem] border border-white/5 items-center gap-6">
+                    <div className="flex gap-4">
+                        <div className="flex bg-card/50 backdrop-blur-xl px-8 py-4 rounded-3xl border border-border items-center gap-6 shadow-sm">
                             <div className="text-right">
-                                <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block">Pulso Global</span>
-                                <span className="font-mono text-2xl text-white font-black tracking-tighter italic">12:45:32</span>
+                                <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase block">Pulso Global</span>
+                                <span className="font-mono text-xl text-foreground font-bold tracking-tighter">12:45:32</span>
                             </div>
-                            <div className="w-4 h-4 bg-sky-500 rounded-full animate-ping opacity-75" />
+                            <div className="w-3 h-3 bg-primary rounded-full animate-ping opacity-75" />
                         </div>
-                        <Button variant="outline" className="h-20 w-20 rounded-[2rem] bg-slate-900 border-white/5 text-slate-500 hover:text-white">
-                            <RefreshCw className="w-8 h-8" />
+                        <Button variant="outline" className="h-auto w-16 rounded-2xl bg-card border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors">
+                            <RefreshCw className="w-6 h-6" />
                         </Button>
                     </div>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 flex-1 overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 flex-1 overflow-hidden pb-0 min-h-0">
                     {[
                         { label: "Entrada", status: "new", color: "text-amber-500", glow: "shadow-amber-500/20" },
                         { label: "Preparando", status: "preparing", color: "text-sky-400", glow: "shadow-sky-400/20" },
-                        { label: "Pronto para Entrega", status: "ready", color: "text-emerald-500", glow: "shadow-emerald-500/20" }
+                        { label: "Pronto", status: "ready", color: "text-emerald-500", glow: "shadow-emerald-500/20" }
                     ].map((col) => {
                         const ordersInCol = mockOrders.filter(o => {
                             if (col.status === "new") return o.status === "new";
@@ -85,17 +87,17 @@ export default function KDSPage() {
                         });
 
                         return (
-                            <section key={col.label} className="flex flex-col gap-8">
-                                <div className="flex items-center justify-between px-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn("w-1.5 h-6 rounded-full", col.color.replace('text', 'bg'))} />
-                                        <h2 className={cn("font-black text-sm uppercase tracking-[0.4em]", col.color)}>{col.label}</h2>
+                            <section key={col.label} className="flex flex-col gap-6 h-full min-h-0 bg-secondary/20 rounded-3xl p-4 border border-border/30 overflow-hidden">
+                                <div className="flex items-center justify-between px-2 shrink-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className={cn("w-1.5 h-5 rounded-full", col.color.replace('text', 'bg'))} />
+                                        <h2 className={cn("font-black text-xs uppercase tracking-[0.2em]", col.color)}>{col.label}</h2>
                                     </div>
-                                    <span className="font-black text-2xl text-slate-700 italic">{ordersInCol.length}</span>
+                                    <span className="font-black text-xl text-muted-foreground">{ordersInCol.length}</span>
                                 </div>
 
-                                <ScrollArea className="flex-1 pr-4">
-                                    <div className="flex flex-col gap-10 pb-10">
+                                <ScrollArea className="flex-1 -mr-3 pr-3 h-full">
+                                    <div className="flex flex-col gap-4 pb-20">
                                         <AnimatePresence mode="popLayout">
                                             {ordersInCol.map((order) => (
                                                 <motion.div
@@ -106,37 +108,37 @@ export default function KDSPage() {
                                                     exit={{ opacity: 0, scale: 0.8, x: 50 }}
                                                     transition={{ type: "spring", damping: 20, stiffness: 100 }}
                                                 >
-                                                    <Card className="ocean-card group border-none shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)]">
-                                                        <div className="space-y-8">
+                                                    <Card className="card-base !p-0 border-none shadow-lg bg-card group overflow-hidden">
+                                                        <div className="p-6 space-y-6">
                                                             <div className="flex justify-between items-start">
                                                                 <div>
-                                                                    <div className="flex items-center gap-2 text-slate-500 mb-2">
+                                                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
                                                                         <Hash className="w-3 h-3" />
-                                                                        <span className="text-[9px] font-black tracking-[0.2em] uppercase">Setor</span>
+                                                                        <span className="text-[10px] font-black tracking-[0.2em] uppercase">Mesa</span>
                                                                     </div>
-                                                                    <h3 className="font-black text-7xl tracking-tighter text-white italic leading-none">{order.table}</h3>
+                                                                    <h3 className="font-black text-5xl tracking-tighter text-foreground italic leading-none font-display">{order.table}</h3>
                                                                 </div>
-                                                                <div className="space-y-4 text-right">
-                                                                    <div className="inline-flex items-center gap-3 bg-white/5 px-5 py-2.5 rounded-2xl border border-white/5">
-                                                                        <Timer className={cn("w-5 h-5", parseInt(order.time) > 20 ? "text-rose-500 animate-pulse" : "text-sky-400")} />
-                                                                        <span className="font-mono font-black text-xl text-white italic tracking-tighter">{order.time}</span>
+                                                                <div className="space-y-3 text-right">
+                                                                    <div className="inline-flex items-center gap-2 bg-secondary px-3 py-1.5 rounded-xl border border-border/50">
+                                                                        <Timer className={cn("w-4 h-4", parseInt(order.time) > 20 ? "text-destructive animate-pulse" : "text-primary")} />
+                                                                        <span className="font-mono font-bold text-lg text-foreground tracking-tight">{order.time}</span>
                                                                     </div>
-                                                                    <p className="text-[10px] text-slate-600 font-extrabold uppercase tracking-widest">ID #{order.id} • {order.waiter}</p>
+                                                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">#{order.id} • {order.waiter}</p>
                                                                 </div>
                                                             </div>
 
-                                                            <div className="space-y-6 border-y border-white/5 py-10">
+                                                            <div className="space-y-4 border-y border-border/50 py-6">
                                                                 {order.items.map((item, idx) => (
-                                                                    <div key={idx} className="flex gap-6 items-start">
-                                                                        <div className="text-3xl font-black text-sky-400 italic bg-sky-500/10 w-14 h-14 rounded-2xl flex items-center justify-center border border-white/5 shrink-0">
+                                                                    <div key={idx} className="flex gap-4 items-start">
+                                                                        <div className="text-xl font-black text-primary italic bg-primary/10 w-10 h-10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0">
                                                                             {item.qty}
                                                                         </div>
-                                                                        <div className="space-y-2 pt-1">
-                                                                            <p className="font-extrabold text-2xl text-slate-100 uppercase tracking-tighter leading-none">{item.name}</p>
+                                                                        <div className="space-y-1 pt-1">
+                                                                            <p className="font-bold text-lg text-foreground uppercase tracking-tight leading-none">{item.name}</p>
                                                                             {item.notes && (
-                                                                                <div className="flex items-center gap-2 text-rose-500">
-                                                                                    <AlertTriangle className="w-4 h-4 shrink-0" />
-                                                                                    <p className="text-xs uppercase font-black tracking-widest animate-pulse">{item.notes}</p>
+                                                                                <div className="flex items-center gap-1.5 text-destructive">
+                                                                                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                                                                                    <p className="text-[10px] uppercase font-bold tracking-wider animate-pulse">{item.notes}</p>
                                                                                 </div>
                                                                             )}
                                                                         </div>
@@ -144,32 +146,32 @@ export default function KDSPage() {
                                                                 ))}
                                                             </div>
 
-                                                            <div className="pt-2">
+                                                            <div className="pt-0">
                                                                 {order.status === 'new' && (
                                                                     <motion.button
-                                                                        whileHover={{ scale: 1.02, x: 5 }}
+                                                                        whileHover={{ scale: 1.02 }}
                                                                         whileTap={{ scale: 0.98 }}
-                                                                        className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter bg-white text-slate-950 flex items-center justify-center gap-4 shadow-2xl transition-all"
+                                                                        className="w-full h-14 rounded-xl font-bold text-sm uppercase tracking-wider bg-foreground text-background flex items-center justify-center gap-3 shadow-md transition-all"
                                                                     >
-                                                                        Inicializar <ArrowRight className="w-6 h-6" />
+                                                                        Inicializar <ArrowRight className="w-5 h-5" />
                                                                     </motion.button>
                                                                 )}
                                                                 {order.status === 'preparing' && (
                                                                     <motion.button
-                                                                        whileHover={{ scale: 1.02, x: 5 }}
+                                                                        whileHover={{ scale: 1.02 }}
                                                                         whileTap={{ scale: 0.98 }}
-                                                                        className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter bg-sky-500 text-white flex items-center justify-center gap-4 shadow-2xl shadow-sky-500/40 transition-all group"
+                                                                        className="w-full h-14 rounded-xl font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground flex items-center justify-center gap-3 shadow-lg shadow-primary/20 transition-all group"
                                                                     >
-                                                                        Confirmar Preparo <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                                                                        Pronto <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                                                     </motion.button>
                                                                 )}
                                                                 {order.status === 'ready' && (
                                                                     <motion.button
                                                                         whileHover={{ scale: 1.02 }}
                                                                         whileTap={{ scale: 0.98 }}
-                                                                        className="w-full h-20 rounded-[2rem] font-black text-xl uppercase tracking-tighter border-2 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 flex items-center justify-center gap-4 transition-all"
+                                                                        className="w-full h-14 rounded-xl font-bold text-sm uppercase tracking-wider border-2 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 flex items-center justify-center gap-3 transition-all"
                                                                     >
-                                                                        <CheckCircle2 className="w-7 h-7" /> Entrega Realizada
+                                                                        <CheckCircle2 className="w-5 h-5" /> Entregue
                                                                     </motion.button>
                                                                 )}
                                                             </div>

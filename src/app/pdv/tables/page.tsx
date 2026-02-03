@@ -9,15 +9,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { LayoutDashboard, Users, Clock, ArrowRight, Filter, Search, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useSocketMock } from "@/hooks/use-socket-mock";
 
 const tableStatus = {
-    available: { label: "Livre", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-    occupied: { label: "Ocupada", color: "text-sky-400", bg: "bg-sky-500/10", border: "border-sky-500/20" },
-    reserved: { label: "Reservada", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-    attention: { label: "Pendente", color: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20" },
+    available: { label: "Livre", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+    occupied: { label: "Ocupada", color: "text-primary", bg: "bg-primary/10", border: "border-primary/20" },
+    reserved: { label: "Reservada", color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+    attention: { label: "Pendente", color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/20" },
 };
 
-const mockTables = [
+const initialTables = [
     { id: "01", status: "occupied", capacity: 4, orders: 3, total: 125.80, time: "45min" },
     { id: "02", status: "available", capacity: 2, orders: 0, total: 0, time: "-" },
     { id: "03", status: "occupied", capacity: 6, orders: 5, total: 342.00, time: "1h 10min" },
@@ -30,158 +31,171 @@ const mockTables = [
     { id: "10", status: "attention", capacity: 6, orders: 1, total: 12.00, time: "5min" },
     { id: "11", status: "available", capacity: 2, orders: 0, total: 0, time: "-" },
     { id: "12", status: "occupied", capacity: 4, orders: 3, total: 156.40, time: "30min" },
+    { id: "13", status: "available", capacity: 4, orders: 0, total: 0, time: "-" },
+    { id: "14", status: "occupied", capacity: 2, orders: 1, total: 85.00, time: "20min" },
+    { id: "15", status: "available", capacity: 4, orders: 0, total: 0, time: "-" },
+    { id: "16", status: "available", capacity: 2, orders: 0, total: 0, time: "-" },
 ];
 
 export default function TablesPage() {
-    return (
-        <div className="flex bg-slate-950 h-screen overflow-hidden p-6 gap-6">
-            <Sidebar />
+    const liveTables = useSocketMock(initialTables);
 
-            <main className="flex-1 ml-32 flex flex-col gap-10 overflow-hidden">
-                <header className="flex flex-col gap-10">
+    const sortedTables = [...liveTables].sort((a, b) => {
+        const idA = parseInt(a.id, 10);
+        const idB = parseInt(b.id, 10);
+        if (!isNaN(idA) && !isNaN(idB)) {
+            return idA - idB;
+        }
+        return a.id.localeCompare(b.id);
+    });
+
+    return (
+        <div className="flex bg-background h-screen w-screen overflow-hidden font-sans text-foreground select-none">
+            <div className="h-full shrink-0 p-3 z-50 hidden md:block">
+                <Sidebar className="w-20" />
+            </div>
+
+            <main className="flex-1 flex flex-col gap-3 py-3 pr-3 overflow-hidden max-w-full relative">
+                <header className="flex flex-col gap-4 shrink-0 px-1">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-10">
+                        <div className="flex items-center gap-4">
                             <div className="relative group">
-                                <div className="absolute -inset-4 bg-sky-500/20 blur-[60px] rounded-full opacity-50 transition-opacity" />
-                                <div className="p-8 bg-slate-900 rounded-[2.5rem] text-sky-400 border border-white/5 relative z-10">
-                                    <LayoutDashboard className="w-14 h-14" />
+                                <div className="absolute -inset-3 bg-primary/20 blur-[40px] rounded-full opacity-50 transition-opacity" />
+                                <div className="p-3 bg-card rounded-xl text-primary border border-border relative z-10 shadow-lg shadow-primary/5">
+                                    <LayoutDashboard className="w-6 h-6" />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none">Mapa de Mesas</h1>
-                                <div className="flex items-center gap-4">
-                                    <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1 font-black text-[10px] tracking-widest uppercase">Setor Principal</Badge>
-                                    <span className="text-slate-600 font-bold text-xs uppercase tracking-widest">12 Mesas Ativas</span>
+                            <div className="space-y-0.5">
+                                <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase italic font-display leading-none">Mapa de Mesas</h1>
+                                <div className="flex items-center gap-2">
+                                    <Badge className="bg-primary/10 text-primary border-primary/20 px-1.5 py-0 font-bold text-[9px] tracking-widest uppercase shadow-sm">Setor Principal</Badge>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
-                            <div className="bg-slate-900/50 backdrop-blur-xl px-10 py-5 rounded-[2rem] border border-white/5 flex items-center gap-10">
-                                <div className="text-center">
-                                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block mb-1">Ocupação</span>
-                                    <span className="font-mono text-3xl text-white font-black tracking-tighter italic">58%</span>
-                                </div>
-                                <div className="w-px h-10 bg-white/5" />
-                                <div className="text-center">
-                                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block mb-1">Clientes</span>
-                                    <span className="font-mono text-3xl text-sky-400 font-black tracking-tighter italic">24</span>
-                                </div>
-                            </div>
-                            <Button className="h-24 px-10 rounded-[2.5rem] bg-gradient-to-br from-sky-400 to-indigo-600 text-white font-black text-xl uppercase tracking-tighter gap-4 shadow-2xl shadow-sky-500/30">
-                                <Plus className="w-8 h-8" /> Nova Mesa
+                        <div className="flex gap-2">
+                            <Button size="sm" className="btn-primary h-10 px-4 rounded-xl text-xs uppercase tracking-tight gap-1.5 shadow-lg shadow-primary/10">
+                                <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Nova Mesa</span>
                             </Button>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-6">
-                        <div className="flex gap-4">
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                        <div className="flex gap-1.5 flex-wrap">
                             {Object.entries(tableStatus).map(([key, value]) => (
-                                <button
+                                <div
                                     key={key}
                                     className={cn(
-                                        "px-8 py-4 rounded-2xl text-[11px] font-black transition-all duration-500 uppercase tracking-widest flex items-center gap-3 border",
+                                        "px-2.5 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 border",
                                         value.bg, value.color, value.border
                                     )}
                                 >
-                                    <div className={cn("w-2 h-2 rounded-full", value.color.replace('text', 'bg'))} />
+                                    <div className={cn("w-1.5 h-1.5 rounded-full", value.color.replace('text', 'bg'))} />
                                     {value.label}
-                                </button>
+                                </div>
                             ))}
                         </div>
 
-                        <div className="flex gap-4 flex-1 max-w-xl">
+                        <div className="flex gap-2 w-full sm:w-auto max-w-xs">
                             <div className="relative flex-1 group">
-                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-700 group-focus-within:text-sky-400 transition-colors" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                 <Input
-                                    placeholder="BUSCAR MESA..."
-                                    className="pl-14 h-16 rounded-2xl bg-slate-900/50 border-white/5 text-lg font-black placeholder:text-slate-800 focus-visible:ring-sky-500/30"
+                                    placeholder="BUSCAR..."
+                                    className="pl-9 h-10 rounded-xl bg-card border-border text-sm font-bold placeholder:text-muted-foreground/50 focus-visible:ring-primary/20 focus-visible:border-primary/50"
                                 />
                             </div>
-                            <Button variant="outline" className="h-16 w-16 rounded-2xl bg-slate-900 border-white/5 text-slate-500">
-                                <Filter className="w-6 h-6" />
+                            <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl bg-card border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors shrink-0">
+                                <Filter className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>
                 </header>
 
-                <ScrollArea className="flex-1 -mx-4 px-4 pb-10">
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-8 pr-4"
-                    >
-                        {mockTables.map((table) => {
-                            const status = tableStatus[table.status as keyof typeof tableStatus];
-                            return (
-                                <motion.div
-                                    key={table.id}
-                                    whileHover={{ y: -8, scale: 1.02 }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                >
-                                    <Card className="ocean-card group border-none !p-0 overflow-hidden bg-slate-900/40">
-                                        <div className={cn("h-2 transition-colors", status.color.replace('text', 'bg'))} />
-
-                                        <div className="p-8 space-y-8">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <span className="text-[10px] font-black tracking-widest text-slate-600 uppercase block mb-2">Mesa</span>
-                                                    <h3 className="text-6xl font-black tracking-tighter text-white italic leading-none">{table.id}</h3>
-                                                </div>
-                                                <Badge className={cn("rounded-xl border-none font-black text-[10px] px-3 py-1", status.bg, status.color)}>
-                                                    {status.label}
-                                                </Badge>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4 border-y border-white/5 py-6">
-                                                <div className="space-y-1">
-                                                    <div className="flex items-center gap-2 text-slate-600">
-                                                        <Users className="w-3 h-3" />
-                                                        <span className="text-[9px] font-black uppercase tracking-widest">Lugares</span>
-                                                    </div>
-                                                    <p className="font-extrabold text-white">{table.capacity}</p>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <div className="flex items-center gap-2 text-slate-600">
-                                                        <Clock className="w-3 h-3" />
-                                                        <span className="text-[9px] font-black uppercase tracking-widest">Tempo</span>
-                                                    </div>
-                                                    <p className="font-extrabold text-white">{table.time}</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-4">
-                                                <div className="flex justify-between items-end">
-                                                    <div className="space-y-1">
-                                                        <span className="text-[10px] font-black py-1 px-3 bg-white/5 rounded-lg text-slate-500 uppercase tracking-widest inline-block">Consumo</span>
-                                                        <p className="text-2xl font-black text-white italic tracking-tighter">
-                                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(table.total)}
-                                                        </p>
-                                                    </div>
-                                                    <div className="flex flex-col items-end">
-                                                        <span className="text-[9px] font-black text-slate-700 uppercase">Itens</span>
-                                                        <span className="font-mono text-sky-400 font-bold">{table.orders}</span>
-                                                    </div>
-                                                </div>
-
-                                                <Button className={cn(
-                                                    "w-full h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all",
-                                                    table.status === 'available'
-                                                        ? "bg-white text-slate-950 hover:bg-slate-200"
-                                                        : "bg-slate-800 text-white hover:bg-slate-700 border border-white/5"
-                                                )}>
-                                                    {table.status === 'available' ? 'Abrir Mesa' : 'Ver Detalhes'}
-                                                    <ArrowRight className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                </motion.div>
-                            );
-                        })}
-                    </motion.div>
-                </ScrollArea>
+                <div className="flex-1 w-full overflow-hidden relative rounded-2xl border border-border/40 bg-card/30">
+                    <ScrollArea className="h-full w-full">
+                        <div className="p-3 pb-32">
+                            <motion.div
+                                layout
+                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3"
+                            >
+                                {sortedTables.map((table) => {
+                                    const status = tableStatus[table.status as keyof typeof tableStatus];
+                                    return (
+                                        <motion.div
+                                            key={table.id}
+                                            layout
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                        >
+                                            <TableCard table={table} status={status} />
+                                        </motion.div>
+                                    );
+                                })}
+                            </motion.div>
+                        </div>
+                    </ScrollArea>
+                </div>
             </main>
         </div>
+    );
+}
+
+function TableCard({ table, status }: { table: any, status: any }) {
+    return (
+        <Card className={cn(
+            "card-base !p-0 overflow-hidden bg-card hover:bg-card/80 border-border/50 group h-full flex flex-col min-h-[160px] transition-all cursor-pointer hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 active:scale-[0.98]"
+        )}>
+            <div className={cn("h-1 transition-colors w-full shrink-0", status.color.replace('text', 'bg'))} />
+
+            <div className="p-3 flex flex-col h-full gap-2 relative">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <span className="text-[8px] font-black tracking-widest text-muted-foreground uppercase block mb-0.5 opacity-70">Mesa</span>
+                        <h3 className="text-2xl font-black tracking-tighter text-foreground italic leading-none font-display">{table.id}</h3>
+                    </div>
+                    <Badge className={cn("rounded-md border font-bold text-[8px] px-1.5 py-0 uppercase shadow-sm h-5 flex items-center", status.bg, status.color, status.border)}>
+                        {status.label}
+                    </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 border-y border-border/50 py-2">
+                    <div className="space-y-0.5">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                            <Users className="w-2.5 h-2.5" />
+                            <span className="text-[8px] font-black uppercase tracking-widest opacity-70">Lugares</span>
+                        </div>
+                        <p className="font-bold text-foreground text-xs">{table.capacity}</p>
+                    </div>
+                    <div className="space-y-0.5">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                            <Clock className="w-2.5 h-2.5" />
+                            <span className="text-[8px] font-black uppercase tracking-widest opacity-70">Tempo</span>
+                        </div>
+                        <p className="font-bold text-foreground text-xs">{table.time}</p>
+                    </div>
+                </div>
+
+                <div className="space-y-2 mt-auto">
+                    <div className="flex justify-between items-end">
+                        <div className="space-y-0.5">
+                            <span className="text-[8px] font-bold py-0 px-1 bg-secondary rounded text-muted-foreground uppercase tracking-widest inline-block opacity-80">R$</span>
+                            <p className="text-sm font-black text-foreground italic tracking-tight">
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(table.total).replace('R$', '').trim()}
+                            </p>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-70">Itens</span>
+                            <span className="font-mono text-primary font-bold text-xs">{table.orders}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Hover overlay hint */}
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center justify-center">
+                    <ArrowRight className="w-5 h-5 text-primary opacity-50" />
+                </div>
+            </div>
+        </Card>
     );
 }

@@ -1,14 +1,14 @@
 "use client";
 
 import NextImage from "next/image";
-import { Plus, Minus, Trash2, ArrowUpRight } from "lucide-react";
+import { Plus, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/store/useCartStore";
 
 interface ProductCardProps {
-    id: string; // Adicionado ID para a lógica do carrinho
+    id: string;
     name: string;
     price: number;
     image: string;
@@ -24,36 +24,34 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
 
     return (
         <motion.div
-            whileHover={{ y: -10 }}
-            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="h-full"
         >
-            <Card className="ocean-card group border-none">
-                <div className="relative h-48 w-full rounded-[1.5rem] overflow-hidden mb-6">
+            <Card className="card-base h-full flex flex-col p-3 group overflow-hidden border-border/50 bg-card hover:bg-card/80 hover:border-primary/50 shadow-sm transition-all duration-200">
+                <div className="relative h-32 w-full rounded-lg overflow-hidden mb-3 bg-secondary shrink-0">
                     <NextImage
                         src={image}
                         alt={name}
                         fill
-                        className="object-cover scale-105 group-hover:scale-110 transition-transform duration-1000 ease-out brightness-90 group-hover:brightness-100"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                     />
-                    <div className="absolute inset-x-3 bottom-3 flex justify-between items-end">
-                        <Badge className="bg-slate-900/60 backdrop-blur-xl text-[10px] uppercase tracking-tighter font-extrabold border-white/5 text-slate-200">
+                    <div className="absolute inset-x-2 bottom-2 flex justify-between items-end">
+                        <Badge className="bg-black/60 backdrop-blur-md text-white border-none text-[9px] uppercase font-bold shadow-sm px-1.5 py-0.5">
                             {category}
                         </Badge>
-                        <div className="w-10 h-10 bg-sky-500/10 backdrop-blur-md rounded-xl border border-white/10 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-500">
-                            <ArrowUpRight className="w-5 h-5" />
-                        </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="font-extrabold text-xl leading-tight text-slate-100 group-hover:text-sky-400 transition-colors uppercase tracking-tight line-clamp-2">
+                <div className="flex-1 flex flex-col space-y-2 min-h-0">
+                    <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-2">
                         {name}
                     </h3>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                        <div className="space-y-1">
-                            <span className="text-slate-500 text-[9px] uppercase font-black tracking-widest block">Investimento</span>
-                            <span className="text-slate-100 font-extrabold text-2xl tracking-tighter">
+                    <div className="mt-auto flex items-center justify-between pt-2 border-t border-border/30">
+                        <div className="space-y-0.5">
+                            <span className="text-muted-foreground text-[9px] uppercase font-bold tracking-wider block">Valor</span>
+                            <span className="text-primary font-bold text-lg tracking-tight">
                                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
                             </span>
                         </div>
@@ -61,9 +59,9 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={handleAdd}
-                            className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white shadow-lg shadow-sky-500/20 flex items-center justify-center transform hover:rotate-6 transition-all"
+                            className="bg-primary text-primary-foreground p-0 w-9 h-9 flex items-center justify-center rounded-lg shadow-md shadow-primary/20 hover:bg-primary/90 transition-colors cursor-pointer"
                         >
-                            <Plus className="w-8 h-8 font-black" />
+                            <Plus className="w-5 h-5" />
                         </motion.button>
                     </div>
                 </div>
