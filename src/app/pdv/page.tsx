@@ -15,16 +15,16 @@ import NextImage from "next/image";
 const categories = ["Todos", "Hambúrgueres", "Pizzas", "Bebidas", "Sobremesas", "Entradas"];
 
 const products = [
-    { id: "p1", name: "Hambúrguer Clássico", price: 32.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
-    { id: "p2", name: "Pizza Margherita", price: 55.00, category: "Pizzas", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&q=80" },
-    { id: "p3", name: "Coca-Cola 350ml", price: 7.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80" },
-    { id: "p4", name: "Fritas Rústicas", price: 18.00, category: "Entradas", image: "https://images.unsplash.com/photo-1573016608964-1449ae37f745?w=400&q=80" },
-    { id: "p5", name: "Double Cheese", price: 42.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80" },
-    { id: "p6", name: "Suco de Laranja", price: 12.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&q=80" },
-    { id: "p7", name: "Petit Gateau", price: 24.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" },
-    { id: "p8", name: "Onion Rings", price: 20.00, category: "Entradas", image: "https://images.unsplash.com/photo-1639024471283-035188835118?w=400&q=80" },
-    { id: "p9", name: "Milkshake Morango", price: 18.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc69d?w=400&q=80" },
-    { id: "p10", name: "Água Mineral", price: 4.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1564419320461-6870880221ad?w=400&q=80" },
+    { id: "p1", name: "Hambúrguer Clássico", price: 32.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80" },
+    { id: "p2", name: "Pizza Margherita", price: 55.00, category: "Pizzas", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=400&q=80" },
+    { id: "p3", name: "Coca-Cola 350ml", price: 7.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80" },
+    { id: "p4", name: "Fritas Rústicas", price: 18.00, category: "Entradas", image: "https://images.unsplash.com/photo-1541592103007-ceb5d812752d?auto=format&fit=crop&w=400&q=80" },
+    { id: "p5", name: "Double Cheese", price: 42.90, category: "Hambúrgueres", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=400&q=80" },
+    { id: "p6", name: "Suco de Laranja", price: 12.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=400&q=80" },
+    { id: "p7", name: "Petit Gateau", price: 24.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80" },
+    { id: "p8", name: "Onion Rings", price: 20.00, category: "Entradas", image: "https://images.unsplash.com/photo-1625938145244-e46050529f7f?auto=format&fit=crop&w=400&q=80" },
+    { id: "p9", name: "Milkshake Morango", price: 18.00, category: "Sobremesas", image: "https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=400&q=80" },
+    { id: "p10", name: "Água Mineral", price: 4.00, category: "Bebidas", image: "https://images.unsplash.com/photo-1564419320461-6870880221ad?auto=format&fit=crop&w=400&q=80" },
 ];
 
 export default function PDVPage() {
@@ -130,7 +130,6 @@ export default function PDVPage() {
                                 key={selectedCategory}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                classMode="wait"
                                 className={cn(
                                     "grid gap-3 pb-20",
                                     isCartOpen
