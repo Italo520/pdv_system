@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { TransferButton } from "@/components/pdv/transfer-button";
 
 interface OrderPageProps {
     params: Promise<{
@@ -53,6 +54,13 @@ export default async function OrderPage({ params }: OrderPageProps) {
                     <p className="text-muted-foreground text-sm">
                         Pedido #{order.id.slice(-6)} • {order.customerName || 'Cliente não identificado'}
                     </p>
+                    <div className="flex items-center gap-2 mt-2 md:mt-0">
+                        <TransferButton
+                            orderId={order.id}
+                            tableNumber={order.table?.number.toString()}
+                            items={order.items}
+                        />
+                    </div>
                 </div>
             </header>
 

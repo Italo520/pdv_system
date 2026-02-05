@@ -184,10 +184,10 @@ Desenvolver um sistema PDV (Ponto de Venda) completo e integrado em Next.js, esp
 **[RF-003] Transferência de Itens entre Mesas/Comandas**
 - **Descrição**: Mover itens consumidos de uma comanda/mesa para outra
 - **Critérios de Aceitação**:
-  - [ ] Seleção de itens específicos para transferência
-  - [ ] Validação de mesa/comanda destino
-  - [ ] Log de auditoria da transferência (quem, quando, o quê)
-  - [ ] Recálculo automático de totais
+  - [x] Seleção de itens específicos para transferência
+  - [x] Validação de mesa/comanda destino
+  - [x] Log de auditoria da transferência (quem, quando, o quê)
+  - [x] Recálculo automático de totais
   - [ ] Impressão de comprovante de transferência (opcional)
 - **Prioridade**: P1-Alto
 

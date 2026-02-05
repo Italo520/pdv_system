@@ -177,6 +177,9 @@ model Order {
   payments      Payment[]
   fiscalNfce    FiscalNfce?
   
+  sourceTransfers TransferLog[] @relation("SourceTransfers")
+  targetTransfers TransferLog[] @relation("TargetTransfers")
+  
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -244,3 +247,17 @@ model FiscalNfce {
   
   createdAt     DateTime @default(now())
 }
+
+model TransferLog {
+  id              String   @id @default(cuid())
+  sourceOrderId   String
+  targetOrderId   String
+  userName        String?
+  items           String   // JSON string of transferred items {id, name, quantity}
+  createdAt       DateTime @default(now())
+
+  sourceOrder     Order    @relation("SourceTransfers", fields: [sourceOrderId], references: [id])
+  targetOrder     Order    @relation("TargetTransfers", fields: [targetOrderId], references: [id])
+}
+
+// Add relations to Order model in next step if not possible here.
