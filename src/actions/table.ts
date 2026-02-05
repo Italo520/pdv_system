@@ -72,3 +72,67 @@ export async function deleteTable(tableId: string) {
         return { error: "Erro ao excluir mesa." };
     }
 }
+
+export async function getTables() {
+    try {
+        const tables = await prisma.table.findMany({
+            orderBy: { number: 'asc' },
+            include: {
+                orders: {
+                    where: {
+                        status: {
+                            in: ['OPEN', 'PREPARING', 'READY', 'DELIVERED']
+                        }
+                    },
+                    select: {
+                        totalAmount: true,
+                        peopleCount: true,
+                        createdAt: true
+                    }
+                }
+            }
+        });
+
+        // Map to include aggregated currentOrder info
+        return tables.map(table => {
+            const activeOrders = table.orders || [];
+            if (activeOrders.length === 0) {
+                return { ...table, currentOrder: null };
+            }
+
+            const totalAmount = activeOrders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
+            const peopleCount = activeOrders.reduce((sum, order) => sum + (order.peopleCount || 1), 0);
+            // Get the earliest creation date (when the table was opened)
+            const createdAt = activeOrders.reduce((earliest, order) =>
+                order.createdAt < earliest ? order.createdAt : earliest
+                , activeOrders[0].createdAt);
+
+            return {
+                ...table,
+                currentOrder: {
+                    totalAmount,
+                    peopleCount,
+                    createdAt
+                }
+            };
+        });
+    } catch (error) {
+        console.error("Error fetching tables:", error);
+        return [];
+    }
+}
+
+export async function updateTablePosition(tableId: string, x: number, y: number) {
+    try {
+        await prisma.table.update({
+            where: { id: tableId },
+            data: { xPosition: x, yPosition: y }
+        });
+        revalidatePath('/admin/tables');
+        revalidatePath('/pdv');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating table position:", error);
+        return { error: "Erro ao atualizar posição da mesa." };
+    }
+}
